@@ -1,0 +1,17 @@
+name: line-api
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: lineapi-sqlserver
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourPassword123!
+      - MSSQL_PID=Developer
+    ports:
+      - '1433:1433'
+    volumes:
+      - sqlserver:/var/opt/mssql
+volumes:
+  sqlserver:
+    driver: local

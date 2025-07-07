@@ -1,0 +1,88 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "1. Build:all",
+      "type": "shell",
+      "command": "dotnet build AgentAI.sln",
+      "group": "build",
+      "problemMatcher": ["$msCompile"]
+    },
+    {
+      "label": "2. Run:hello-ai",
+      "type": "shell",
+      "command": "dotnet run --project src/0.HelloWorld/hello-ai/hello-ai.csproj",
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "3. Run:semantickernel-plugins",
+      "type": "shell",
+      "command": "dotnet run --project src/0.HelloWorld/semantickernel-plugins/semantickernel-plugins.csproj",
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "4. Docker Compose:up",
+      "type": "shell",
+      "command": "docker compose up",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "5. Create Database",
+      "type": "shell",
+      "command": "sleep 10 && docker exec -i lineapi-sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P 'YourPassword123!' -C -Q \"IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'lineapi') CREATE DATABASE lineapi; SELECT name FROM sys.databases WHERE name = 'lineapi';\"",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "6. Migration:apply",
+      "type": "shell",
+      "command": "dotnet ef database update --project src/3.Infrastructure/AgentAI.Infrastructure.csproj",
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "7. Run:webapi",
+      "type": "shell",
+      "command": "dotnet run --project src/4.Presentation/5.WebApi/AgentAI.Presentation.WebApi.csproj",
+      "group": "none"
+    },
+    {
+      "label": "8. Migration:add",
+      "type": "shell",
+      "command": "dotnet ef migrations add ${input:migrationName} --project src/3.Infrastructure/AgentAI.Infrastructure.csproj --output-dir BackingServices/SqlServer/Migrations",
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "9. Migration:remove latest",
+      "type": "shell",
+      "command": "dotnet ef migrations remove --project src/3.Infrastructure/AgentAI.Infrastructure.csproj",
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "10. Migration:revert latest",
+      "type": "shell",
+      "command": "dotnet ef database update 0 --project src/3.Infrastructure/AgentAI.Infrastructure.csproj",
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "11. Migration:clear all",
+      "type": "shell",
+      "command": "rm -rf src/3.Infrastructure/BackingServices/SqlServer/Migrations/*",
+      "group": "none",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "migrationName",
+      "type": "promptString",
+      "description": "Enter migration name"
+    }
+  ]
+}

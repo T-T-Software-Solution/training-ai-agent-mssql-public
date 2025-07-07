@@ -1,0 +1,881 @@
+{
+	"info": {
+		"_postman_id": "c0661d99-83d4-4df7-8f2b-b5c8a30308ae",
+		"name": "B2D Training Agent AI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26015933"
+	},
+	"item": [
+		{
+			"name": "1.Semantic Kernel PlugIn",
+			"item": [
+				{
+					"name": "1. Get Software Version",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{semanticKernelApiUrl}}/Software/version",
+							"host": [
+								"{{semanticKernelApiUrl}}"
+							],
+							"path": [
+								"Software",
+								"version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if(jsonData.token){",
+									"    pm.collectionVariables.set(\"semanticKernelBearerToken\", jsonData.token);",
+									"    console.log(\"semanticKernelBearerToken token stored:\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{semanticKernelLoginUser}}\",\n  \"password\": \"{{semanticKernelLoginPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{semanticKernelApiUrl}}/Auth/login",
+							"host": [
+								"{{semanticKernelApiUrl}}"
+							],
+							"path": [
+								"Auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Call Protected API",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{semanticKernelBearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{semanticKernelApiUrl}}/Protected/data",
+							"host": [
+								"{{semanticKernelApiUrl}}"
+							],
+							"path": [
+								"Protected",
+								"data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Chat - Hello World",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{semanticKernelBearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"question\": \"ท้องฟ้าสีอะไร\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{semanticKernelApiUrl}}/Chat/message",
+							"host": [
+								"{{semanticKernelApiUrl}}"
+							],
+							"path": [
+								"Chat",
+								"message"
+							]
+						},
+						"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:5155/Chat/message' \\\n  -H 'accept: */*' \\\n  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZ2xvYmFsYXp1cmUyMDI1dGhhZG1pbiIsImV4cCI6MTc0Njc4Njc3NX0.KQ93czEgxtua_YNippYC_4dXV3vkIgGWgs8dTS8_PSU' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"question\": \"ท้องฟ้าสีอะไร\"\n}'"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Chat - Hello World- ดูสถานะไฟ",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{semanticKernelBearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"question\": \"แสดงสถานะไฟในบ้าน\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{semanticKernelApiUrl}}/Chat/message",
+							"host": [
+								"{{semanticKernelApiUrl}}"
+							],
+							"path": [
+								"Chat",
+								"message"
+							]
+						},
+						"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:5155/Chat/message' \\\n  -H 'accept: */*' \\\n  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZ2xvYmFsYXp1cmUyMDI1dGhhZG1pbiIsImV4cCI6MTc0Njc4Njc3NX0.KQ93czEgxtua_YNippYC_4dXV3vkIgGWgs8dTS8_PSU' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"question\": \"ท้องฟ้าสีอะไร\"\n}'"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Chat - Semantic Kernel - ดูสถานะไฟ",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{semanticKernelBearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"question\": \"แสดงสถานะไฟในบ้าน\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{semanticKernelApiUrl}}/Chat/semantickernelplugin",
+							"host": [
+								"{{semanticKernelApiUrl}}"
+							],
+							"path": [
+								"Chat",
+								"semantickernelplugin"
+							]
+						},
+						"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:5155/Chat/message' \\\n  -H 'accept: */*' \\\n  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZ2xvYmFsYXp1cmUyMDI1dGhhZG1pbiIsImV4cCI6MTc0Njc4Njc3NX0.KQ93czEgxtua_YNippYC_4dXV3vkIgGWgs8dTS8_PSU' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"question\": \"ท้องฟ้าสีอะไร\"\n}'"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Chat - Semantic Kernel - เปิดไฟ",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{semanticKernelBearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"question\": \"เปิดไฟตั้งโต๊ะ เปิดไฟไฟระเบียง เสร็จแล้วแสดงสถานะไฟในบ้าน\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{semanticKernelApiUrl}}/Chat/semantickernelplugin",
+							"host": [
+								"{{semanticKernelApiUrl}}"
+							],
+							"path": [
+								"Chat",
+								"semantickernelplugin"
+							]
+						},
+						"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:5155/Chat/message' \\\n  -H 'accept: */*' \\\n  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZ2xvYmFsYXp1cmUyMDI1dGhhZG1pbiIsImV4cCI6MTc0Njc4Njc3NX0.KQ93czEgxtua_YNippYC_4dXV3vkIgGWgs8dTS8_PSU' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"question\": \"ท้องฟ้าสีอะไร\"\n}'"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Chat - Semantic Kernel - เปิดไฟพร้อมทำงาน",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{semanticKernelBearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"question\": \"ปรับไฟในบ้านให้พร้อมทำงาน เลือกตามความเหมาะสม เสร็จแล้วแสดงสถานะไฟในบ้าน\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{semanticKernelApiUrl}}/Chat/semantickernelplugin",
+							"host": [
+								"{{semanticKernelApiUrl}}"
+							],
+							"path": [
+								"Chat",
+								"semantickernelplugin"
+							]
+						},
+						"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:5155/Chat/message' \\\n  -H 'accept: */*' \\\n  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZ2xvYmFsYXp1cmUyMDI1dGhhZG1pbiIsImV4cCI6MTc0Njc4Njc3NX0.KQ93czEgxtua_YNippYC_4dXV3vkIgGWgs8dTS8_PSU' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"question\": \"ท้องฟ้าสีอะไร\"\n}'"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Chat - Semantic Kernel - Hello World",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{semanticKernelBearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"question\": \"ท้องฟ้าสีอะไร\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{semanticKernelApiUrl}}/Chat/semantickernelplugin",
+							"host": [
+								"{{semanticKernelApiUrl}}"
+							],
+							"path": [
+								"Chat",
+								"semantickernelplugin"
+							]
+						},
+						"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:5155/Chat/message' \\\n  -H 'accept: */*' \\\n  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZ2xvYmFsYXp1cmUyMDI1dGhhZG1pbiIsImV4cCI6MTc0Njc4Njc3NX0.KQ93czEgxtua_YNippYC_4dXV3vkIgGWgs8dTS8_PSU' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"question\": \"ท้องฟ้าสีอะไร\"\n}'"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Chat - Semantic Kernel - อากาศ",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{semanticKernelBearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"question\": \"สภาพอากาศในกรุงเทพวันนี้เป็นยังไง\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{semanticKernelApiUrl}}/Chat/semantickernelplugin",
+							"host": [
+								"{{semanticKernelApiUrl}}"
+							],
+							"path": [
+								"Chat",
+								"semantickernelplugin"
+							]
+						},
+						"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:5155/Chat/message' \\\n  -H 'accept: */*' \\\n  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZ2xvYmFsYXp1cmUyMDI1dGhhZG1pbiIsImV4cCI6MTc0Njc4Njc3NX0.KQ93czEgxtua_YNippYC_4dXV3vkIgGWgs8dTS8_PSU' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"question\": \"ท้องฟ้าสีอะไร\"\n}'"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2.Web API",
+			"item": [
+				{
+					"name": "Get Software Version",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{lineWebHookApiUrl}}/api/Software/version",
+							"host": [
+								"{{lineWebHookApiUrl}}"
+							],
+							"path": [
+								"api",
+								"Software",
+								"version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if(jsonData.token){",
+									"    pm.collectionVariables.set(\"lineWebHookBearerToken\", jsonData.token);",
+									"    console.log(\"lineWebHookBearerToken token stored:\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{lineWebHookLoginUser}}\",\n  \"password\": \"{{lineWebHookLoginPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{lineWebHookApiUrl}}/Auth/login",
+							"host": [
+								"{{lineWebHookApiUrl}}"
+							],
+							"path": [
+								"Auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate Line Signature",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if(jsonData.signature){",
+									"    pm.collectionVariables.set(\"lineSignature\", jsonData.signature);",
+									"    console.log(\"lineSignature signature stored:\", jsonData.signature);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{lineWebHookBearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"destination\": \"xxxxxxxxxx\",\n  \"events\": [\n    {\n      \"type\": \"message\",\n      \"message\": {\n        \"type\": \"text\",\n        \"id\": \"468789577898262530\", // ID of the sent message\n        \"quotedMessageId\": \"468789532432007169\", // ID of the quoted message\n        \"quoteToken\": \"q3Plxr4AgKd...\",\n        \"text\": \"Chicken, please.\" // Text of the sent message\n      },\n      \"webhookEventId\": \"01H810YECXQQZ37VAXPF6H9E6T\",\n      \"deliveryContext\": {\n        \"isRedelivery\": false\n      },\n      \"timestamp\": 1692251666727,\n      \"source\": {\n        \"type\": \"group\",\n        \"groupId\": \"Ca56f94637c...\",\n        \"userId\": \"U4af4980629...\"\n      },\n      \"replyToken\": \"38ef843bde154d9b91c21320ffd17a0f\",\n      \"mode\": \"active\"\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{lineWebHookApiUrl}}/api/LineWebhook/GenerateSignature",
+							"host": [
+								"{{lineWebHookApiUrl}}"
+							],
+							"path": [
+								"api",
+								"LineWebhook",
+								"GenerateSignature"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Handle Line Webhook",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Line-Signature",
+								"value": "{{lineSignature}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"destination\": \"xxxxxxxxxx\",\n  \"events\": [\n    {\n      \"type\": \"message\",\n      \"message\": {\n        \"type\": \"text\",\n        \"id\": \"468789577898262530\", // ID of the sent message\n        \"quotedMessageId\": \"468789532432007169\", // ID of the quoted message\n        \"quoteToken\": \"q3Plxr4AgKd...\",\n        \"text\": \"Chicken, please.\" // Text of the sent message\n      },\n      \"webhookEventId\": \"01H810YECXQQZ37VAXPF6H9E6T\",\n      \"deliveryContext\": {\n        \"isRedelivery\": false\n      },\n      \"timestamp\": 1692251666727,\n      \"source\": {\n        \"type\": \"group\",\n        \"groupId\": \"Ca56f94637c...\",\n        \"userId\": \"U4af4980629...\"\n      },\n      \"replyToken\": \"38ef843bde154d9b91c21320ffd17a0f\",\n      \"mode\": \"active\"\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{lineWebHookApiUrl}}/api/LineWebhook/ReceiveHook",
+							"host": [
+								"{{lineWebHookApiUrl}}"
+							],
+							"path": [
+								"api",
+								"LineWebhook",
+								"ReceiveHook"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3.Line",
+			"item": [
+				{
+					"name": "Get Line Access Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if(jsonData.access_token){",
+									"    pm.collectionVariables.set(\"lineShortLivedAccessToken\", jsonData.access_token);",
+									"    console.log(\"lineShortLivedAccessToken stored:\", jsonData.access_token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{lineChannelClientId}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{lineChannelClientSecret}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.line.me/oauth2/v3/token",
+							"protocol": "https",
+							"host": [
+								"api",
+								"line",
+								"me"
+							],
+							"path": [
+								"oauth2",
+								"v3",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{lineShortLivedAccessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://api.line.me/v2/bot/profile/U362279a9cdd73ae143162384951de893",
+							"protocol": "https",
+							"host": [
+								"api",
+								"line",
+								"me"
+							],
+							"path": [
+								"v2",
+								"bot",
+								"profile",
+								"U362279a9cdd73ae143162384951de893"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send push message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{lineShortLivedAccessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"to\": \"U362279a9cdd73ae143162384951de893\",\r\n    \"messages\":[\r\n        {\r\n            \"type\":\"text\",\r\n            \"text\":\"Hello, world1\"\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "https://api.line.me/v2/bot/message/push",
+							"protocol": "https",
+							"host": [
+								"api",
+								"line",
+								"me"
+							],
+							"path": [
+								"v2",
+								"bot",
+								"message",
+								"push"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send reply message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{lineShortLivedAccessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"replyToken\":\"aca5a295be1348e6a4b85e34630ab85b\",\r\n    \"messages\":[\r\n        {\r\n            \"type\":\"text\",\r\n            \"text\":\"Hello, user\"\r\n        },\r\n        {\r\n            \"type\":\"text\",\r\n            \"text\":\"May I help you?\"\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "https://api.line.me/v2/bot/message/reply",
+							"protocol": "https",
+							"host": [
+								"api",
+								"line",
+								"me"
+							],
+							"path": [
+								"v2",
+								"bot",
+								"message",
+								"reply"
+							],
+							"query": [
+								{
+									"key": "Authorization",
+									"value": "Bearer  Access Token",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "semanticKernelApiUrl",
+			"value": "http://localhost:5155"
+		},
+		{
+			"key": "semanticKernelLoginUser",
+			"value": "globalazure2025thadmin",
+			"type": "string"
+		},
+		{
+			"key": "semanticKernelLoginPassword",
+			"value": "Tnu0BwHVScr2rf0qRwCETDA9HRQG1k",
+			"type": "string"
+		},
+		{
+			"key": "semanticKernelBearerToken",
+			"value": ""
+		},
+		{
+			"key": "lineWebHookApiUrl",
+			"value": "http://localhost:5030",
+			"type": "string"
+		},
+		{
+			"key": "lineWebHookLoginUser",
+			"value": "agentai-admin",
+			"type": "string"
+		},
+		{
+			"key": "lineWebHookLoginPassword",
+			"value": "AgentAI2025SecurePassword123!",
+			"type": "string"
+		},
+		{
+			"key": "lineWebHookBearerToken",
+			"value": ""
+		},
+		{
+			"key": "lineChannelClientId",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "lineChannelClientSecret",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "lineSignature",
+			"value": ""
+		},
+		{
+			"key": "lineShortLivedAccessToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

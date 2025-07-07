@@ -1,0 +1,75 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace AgentAI.Application;
+
+public class LineMessagingAPI
+{
+    public class WebhookRequest
+    {
+        public string? Destination { get; set; }
+        public List<Event>? Events { get; set; }
+
+        public class Event
+        {
+            public string? Type { get; set; }
+            public Message? Message { get; set; }
+            public string? WebhookEventId { get; set; }
+            public DeliveryContextObject? DeliveryContext { get; set; }
+            public long? Timestamp { get; set; }
+            public SourceObject? Source { get; set; }
+            public string? ReplyToken { get; set; }
+            public string? Mode { get; set; }
+            public Postback? Postback { get; set; }
+        }
+
+        public class Message
+        {
+            public string? Type { get; set; }
+            public string? Id { get; set; }
+            public string? QuoteToken { get; set; }
+            public string? Text { get; set; }
+        }
+
+        public class DeliveryContextObject
+        {
+            public bool IsRedelivery { get; set; }
+        }
+
+        public class SourceObject
+        {
+            public string? Type { get; set; }
+            public string? UserId { get; set; }
+            public string? GroupId { get; set; }
+        }
+
+        public class Postback
+        {
+            public string? Data { get; set; }
+        }
+    }
+    public class TokenResponse
+    {
+        public string? access_token { get; set; }
+    }
+
+    public class UserProfile
+    {
+        [JsonPropertyName("userId")]
+        public string? UserId { get; set; }
+        [JsonPropertyName("displayName")]
+        public string? DisplayName { get; set; }
+        [JsonPropertyName("pictureUrl")]
+        public string? PictureUrl { get; set; }
+        [JsonPropertyName("statusMessage")]
+        public string? StatusMessage { get; set; }
+        [JsonPropertyName("language")]
+        public string? Language { get; set; }
+    }
+    public class ReplyMessage
+    {
+        public JsonDocument? InputJson { get; set; }
+        public JsonDocument? OutputJson { get; set; }
+    }
+
+}
