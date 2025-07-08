@@ -217,7 +217,13 @@ Always end with: “Let me know if you’d like more detail or examples for your
                         prompt: message,
                         assistantPrompt: assistantPrompt,
                         chatHistory: chatHistory);
-
+        
+        // chatHistory.Add(new ChatCompletionModels.ChatHistory
+        // {
+        //     IsBot = false,
+        //     Message = "[userid:111][usergroup:222]",
+        //     CreatedAt = DateTimeOffset.UtcNow
+        // });
         // var result = await _chatCompletionInfraService.GetSemanticKernelMCPCompletion(
         //                 prompt: message,
         //                 assistantPrompt: assistantPrompt,

@@ -13,7 +13,6 @@ public static class ServiceCollectionExtensions
         services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
         services.Configure<AuthOptions>(configuration.GetSection("Auth"));
         services.Configure<SqlServerOptions>(configuration.GetSection("SqlServer"));
-        services.Configure<AzureAdOptions>(configuration.GetSection("AzureAd"));
         services.Configure<MCPOptions>(configuration.GetSection("MCP"));
         return services;
     }

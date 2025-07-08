@@ -21,18 +21,15 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
 
     private readonly AzureOpenAIOptions _openAIOptions;
     private readonly ILogger<ChatCompletionInfraService> _logger;
-    private readonly AzureAdOptions _azureAdOptions;
     private readonly MCPOptions _mcpOptions;
 
     public ChatCompletionInfraService(
         IOptions<AzureOpenAIOptions> openAIOptions,
         ILogger<ChatCompletionInfraService> logger,
-        IOptions<AzureAdOptions> azureAdOptions,
         IOptions<MCPOptions> mcpOptions)
     {
         _openAIOptions = openAIOptions.Value;
         _logger = logger;
-        _azureAdOptions = azureAdOptions.Value;
         _mcpOptions = mcpOptions.Value;
     }
 
@@ -218,10 +215,8 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
     {
         _logger.LogInformation("Prompt: {Prompt}", prompt);
 
-        AuthenticationResult? adToken = await GetAzureAdToken();
-
         // Wrap the MCP client in an 'await using' block to ensure it's disposed correctly
-        await using (IMcpClient mcpClient = await GetMcpClient(adToken))
+        await using (IMcpClient mcpClient = await GetMcpClient())
         {
             IList<McpClientTool> tools = await GetMcpTools(mcpClient);
 
@@ -278,21 +273,13 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
         return (semanticKernel, semanticKernelPlugInService);
     }
 
-    private async Task<IMcpClient> GetMcpClient(AuthenticationResult? adToken)
+    private async Task<IMcpClient> GetMcpClient()
     {
-        if (adToken == null)
-        {
-            throw new InvalidOperationException("Azure AD token is null. Cannot create MCP client.");
-        }
-
         return await McpClientFactory.CreateAsync(
                     new SseClientTransport(new()
                     {
                         Endpoint = new Uri(_mcpOptions.Endpoint),
-                        AdditionalHeaders = new Dictionary<string, string>
-                        {
-                            { "Authorization", $"Bearer {adToken.AccessToken}" }
-                        }
+                        AdditionalHeaders = new Dictionary<string, string>{}
                     }));
     }
 
@@ -310,36 +297,6 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
         Console.WriteLine();
 
         return tools;
-    }
-
-    private async Task<AuthenticationResult?> GetAzureAdToken()
-    {
-        var authority = $"https://login.microsoftonline.com/{_azureAdOptions.TenantId}";
-
-        var app = ConfidentialClientApplicationBuilder.Create(_azureAdOptions.ClientId)
-            .WithClientSecret(_azureAdOptions.ClientSecret)
-            .WithAuthority(authority)
-            .Build();
-
-        string[] scopes = new[] { _azureAdOptions.Audience ?? string.Empty };
-
-        AuthenticationResult? resultX = null;
-        try
-        {
-            resultX = await app.AcquireTokenForClient(scopes).ExecuteAsync();
-            Console.WriteLine("==== Azure Access Token: =====");
-            Console.WriteLine(resultX.AccessToken);
-        }
-        catch (MsalClientException ex)
-        {
-            Console.WriteLine($"Error acquiring token: {ex.Message}");
-        }
-        if (resultX == null)
-        {
-            Console.WriteLine("Failed to acquire access token. Exiting.");
-        }
-
-        return resultX;
     }
 
     private class LightsPlugin
