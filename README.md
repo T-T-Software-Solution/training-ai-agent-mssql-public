@@ -2,6 +2,12 @@
 
 โปรเจกต์ตัวอย่างสำหรับการสร้าง AI Agent ที่ผสาน LINE Bot, Azure OpenAI, Semantic Kernel และฐานข้อมูล SQL Server ด้วย .NET 8 ตามแนวคิด Clean Architecture
 
+![](./images/Banner.jpg)
+
+### Presentation:
+
+https://www.canva.com/design/DAGsGHagNaQ/gm-W6_wphJqpzUWYd1_A1g/view?utm_content=DAGsGHagNaQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h8969297a24
+
 ---
 
 ## 🚀 วิธีรันโปรเจกต์ด้วย VS Code Tasks (แนะนำ)
