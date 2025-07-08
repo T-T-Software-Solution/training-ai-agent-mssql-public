@@ -179,8 +179,10 @@ public class MessagingBusinessService : IMessagingBusinessService
 
             if (IsAIAutoReply(existingUser))
             {
-                botReplyMessage = await PerformCallingLLM(info.MessageText, chatSessionId);
-                await HandleAIAutoReplyAsync(webhookEvent, chatSessionId, botReplyMessage, accessToken, info.ReplyToken);
+                var llmResponse = await PerformCallingLLM(info.MessageText, chatSessionId);
+
+                await HandleAILLMsReplyAsync(webhookEvent, chatSessionId, accessToken, info.ReplyToken, llmResponse);
+
                 return;
             }
 
@@ -193,7 +195,7 @@ public class MessagingBusinessService : IMessagingBusinessService
         }
     }
 
-    private async Task<string> PerformCallingLLM(string message, Guid sessionId)
+    private async Task<ChatCompletionModels.ChatCompletionResponse> PerformCallingLLM(string message, Guid sessionId)
     {
         var assistantPrompt = @"
 You are “DealerDMS Pro,” a domain-expert assistant for the Powersports industry.
@@ -217,7 +219,7 @@ Always end with: “Let me know if you’d like more detail or examples for your
                         prompt: message,
                         assistantPrompt: assistantPrompt,
                         chatHistory: chatHistory);
-        
+
         // chatHistory.Add(new ChatCompletionModels.ChatHistory
         // {
         //     IsBot = false,
@@ -285,6 +287,26 @@ Always end with: “Let me know if you’d like more detail or examples for your
             Message = botReplyMessage,
             SenderType = ChatHistorySendTextBinding.Bot,
             MessageMode = ChatHistoryMessageModeBinding.Auto // Always Auto for bot replies
+        });
+    }
+
+    private async Task RecordLLMChatHistory(WebhookEvent webhookEvent, Guid chatSessionId,  
+        ChatCompletionModels.ChatCompletionResponse llmResponse)
+    {
+        _logger.LogInformation("Bot reply message: {BotReplyMessage}", llmResponse.OutputCompletion);
+
+        await _chatHistoryRepository.AddAsync(new ChatHistory
+        {
+            Id = Guid.NewGuid(),
+            ChatSessionId = chatSessionId,
+            WebhookEventId = webhookEvent.Id,
+            Message = llmResponse.OutputCompletion,
+            SenderType = ChatHistorySendTextBinding.Bot,
+            MessageMode = ChatHistoryMessageModeBinding.Auto, // Always Auto for bot replies
+            LLMsInput = llmResponse.InputPrompt,
+            LLMsProcessingTime = llmResponse.ProcessingTime,
+            LLMsInputToken = llmResponse.InputToken,
+            LLMsOutputToken = llmResponse.OutputToken  
         });
     }
 
@@ -431,13 +453,27 @@ Always end with: “Let me know if you’d like more detail or examples for your
                existingUser.ReplyMode == ChatSessionReplyModeBinding.AutoReplyByAI;
     }
 
-    private async Task HandleAIAutoReplyAsync(WebhookEvent webhookEvent, Guid chatSessionId, string botReplyMessage, string accessToken, string replyToken)
+    private async Task HandleAIAutoReplyAsync(WebhookEvent webhookEvent, Guid chatSessionId,
+        string botReplyMessage, string accessToken, string replyToken)
     {
         // If a specific greeting message is set, record it as the bot reply
         await RecordBotChatHistory(webhookEvent, chatSessionId, botReplyMessage);
 
         // Send the message back to the user
         await ReplyToLineUserAsync(accessToken, botReplyMessage, replyToken);
+
+        // Mark the webhook event as processed
+        await MarkWebhookEventProcessedAsync(webhookEvent);
+    }
+    
+    private async Task HandleAILLMsReplyAsync(WebhookEvent webhookEvent, Guid chatSessionId,
+        string accessToken, string replyToken, ChatCompletionModels.ChatCompletionResponse llmResponse)
+    {
+        // If a specific greeting message is set, record it as the bot reply
+        await RecordLLMChatHistory(webhookEvent, chatSessionId, llmResponse);
+
+        // Send the message back to the user
+        await ReplyToLineUserAsync(accessToken, llmResponse.OutputCompletion, replyToken);
 
         // Mark the webhook event as processed
         await MarkWebhookEventProcessedAsync(webhookEvent);

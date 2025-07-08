@@ -22,6 +22,13 @@ public class ChatHistory : BaseEntity
 
     [Required]
     public string MessageMode { get; set; } = string.Empty; // Auto or Manual from ChatHistoryMessageModeBinding
+
+    public string? LLMsInput { get; set; }
+    public int? LLMsProcessingTime { get; set; } // Seconds
+    public int? LLMsInputToken { get; set; } // Tokens used in the request
+    public int? LLMsOutputToken { get; set; } // Tokens used in the response
+    public int? LLMsPercentAccuracyByHuman { get; set; }
+    public int? LLMsPercentAccuracyByAI { get; set; }
 }
 
 public interface IChatHistoryRepository

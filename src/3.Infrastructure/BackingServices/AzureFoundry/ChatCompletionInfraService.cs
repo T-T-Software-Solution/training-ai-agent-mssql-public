@@ -33,7 +33,7 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
         _mcpOptions = mcpOptions.Value;
     }
 
-    public async Task<string> GetCompletion(string prompt, string? assistantPrompt = null)
+    public async Task<ChatCompletionModels.ChatCompletionResponse> GetCompletion(string prompt, string? assistantPrompt = null)
     {
         _logger.LogInformation("Prompt: {Prompt}", prompt);
 
@@ -48,15 +48,22 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
 
             var result = await chatCompletionService.GetChatMessageContentAsync(chatHistory: chatHistory);
 
-            LogLLMUsages(startupTime, result);
+            var responseFromLLM = LogLLMUsages(prompt, startupTime, result);
 
-            return result.Content ?? string.Empty;
+            return responseFromLLM;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting completion from AI");
 
-            return ErrorCallingAI;
+            return new ChatCompletionModels.ChatCompletionResponse
+            {
+                InputPrompt = prompt ?? string.Empty,
+                OutputCompletion = string.Empty,
+                ProcessingTime = 0,
+                InputToken = 0,
+                OutputToken = 0
+            };
         }
     }
 
@@ -96,7 +103,7 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
         return chatHistory;
     }
 
-    private void LogLLMUsages(DateTime startupTime, ChatMessageContent result)
+    private ChatCompletionModels.ChatCompletionResponse LogLLMUsages(string inputPrompt, DateTime startupTime, ChatMessageContent result)
     {
         var endTime = DateTime.UtcNow;
         var processingTime = (int)(endTime - startupTime).TotalSeconds;
@@ -121,9 +128,19 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
 
         _logger.LogInformation($"Total Cost (USD): {costInputToken + costOutputToken}");
         _logger.LogInformation($"Total Cost (THB): {(costInputToken + costOutputToken) * 35}");
+
+        // Return the response with processing time and token usage
+        return new ChatCompletionModels.ChatCompletionResponse
+        {
+            InputPrompt = inputPrompt ?? string.Empty,
+            OutputCompletion = result.Content ?? string.Empty,
+            ProcessingTime = processingTime,
+            InputToken = inputToken ?? 0,
+            OutputToken = outputToken ?? 0
+        };
     }
 
-    public async Task<string> GetSemanticKernelPlugInCompletion(string prompt, string? systemPrompt = null,
+    public async Task<ChatCompletionModels.ChatCompletionResponse> GetSemanticKernelPlugInCompletion(string prompt, string? systemPrompt = null,
         IEnumerable<ChatCompletionModels.ChatHistory>? chatHistoryFromSession = null)
     {
         _logger.LogInformation("Prompt: {Prompt}", prompt);
@@ -143,15 +160,22 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
                 kernel: semanticKernel
                 );
 
-            LogLLMUsages(startupTime, result);
+            var responseFromLLM = LogLLMUsages(prompt, startupTime, result);
 
-            return result.Content ?? string.Empty;
+            return responseFromLLM;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting completion from AI");
 
-            return ErrorCallingAI;
+            return new ChatCompletionModels.ChatCompletionResponse
+            {
+                InputPrompt = prompt ?? string.Empty,
+                OutputCompletion = string.Empty,
+                ProcessingTime = 0,
+                InputToken = 0,
+                OutputToken = 0
+            };
         }
     }
 
@@ -210,7 +234,7 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
         return chatHistory;
     }
 
-    public async Task<string> GetSemanticKernelMCPCompletion(string prompt, string? systemPrompt = null,
+    public async Task<ChatCompletionModels.ChatCompletionResponse> GetSemanticKernelMCPCompletion(string prompt, string? systemPrompt = null,
         IEnumerable<ChatCompletionModels.ChatHistory>? chatHistoryFromSession = null)
     {
         _logger.LogInformation("Prompt: {Prompt}", prompt);
@@ -234,16 +258,23 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
                     executionSettings: new() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() },
                     kernel: semanticKernel
                     );
-                
-                LogLLMUsages(startupTime, result);
 
-                return result.Content ?? string.Empty;
+                var responseFromLLM = LogLLMUsages(prompt, startupTime, result);
+
+                return responseFromLLM;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting completion from AI");
 
-                return ErrorCallingAI;
+                return new ChatCompletionModels.ChatCompletionResponse
+                {
+                    InputPrompt = prompt ?? string.Empty,
+                    OutputCompletion = string.Empty,
+                    ProcessingTime = 0,
+                    InputToken = 0,
+                    OutputToken = 0
+                };
             }
         }
     }
@@ -262,9 +293,9 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
         // Build the kernel
         var semanticKernel = kernelBuilder.Build();
 
-        #pragma warning disable SKEXP0001 // AsKernelFunction is for evaluation purposes only
+#pragma warning disable SKEXP0001 // AsKernelFunction is for evaluation purposes only
         semanticKernel.Plugins.AddFromFunctions("DealerTools", tools.Select(aiFunction => aiFunction.AsKernelFunction()));
-        #pragma warning restore SKEXP0001
+#pragma warning restore SKEXP0001
 
         // Get the chat completion service from the kernel
         var semanticKernelPlugInService = semanticKernel.GetRequiredService<IChatCompletionService>();
@@ -279,7 +310,7 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
                     new SseClientTransport(new()
                     {
                         Endpoint = new Uri(_mcpOptions.Endpoint),
-                        AdditionalHeaders = new Dictionary<string, string>{}
+                        AdditionalHeaders = new Dictionary<string, string> { }
                     }));
     }
 
