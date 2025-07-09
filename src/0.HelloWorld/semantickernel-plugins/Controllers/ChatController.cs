@@ -19,23 +19,23 @@ public class ChatController : ControllerBase
         _chatCompletionService = chatCompletionService;
     }
 
-    // [HttpPost("message")]
-    // public async Task<IActionResult> GetChatMessage([FromBody] MessageRequest request)
-    // {
-    //     var answer = await _chatCompletionService.GetCompletion(
-    //         prompt: request.Question,
-    //         assistantPrompt: string.Empty);
+    [HttpPost("message")]
+    public async Task<IActionResult> GetChatMessage([FromBody] MessageRequest request)
+    {
+        var answer = await _chatCompletionService.GetCompletion(
+            prompt: request.Question,
+            assistantPrompt: string.Empty);
 
-    //     return Ok(new { Message = answer });
-    // }
+        return Ok(new { Message = answer });
+    }
 
-    // [HttpPost("semantickernelplugin")]
-    // public async Task<IActionResult> GetSemanticKernelPluginMessage([FromBody] MessageRequest request)
-    // {
-    //     var answer = await _chatCompletionService.GetSemanticKernelPlugInCompletion(
-    //         prompt: request.Question,
-    //         assistantPrompt: string.Empty);
+    [HttpPost("semantickernelplugin")]
+    public async Task<IActionResult> GetSemanticKernelPluginMessage([FromBody] MessageRequest request)
+    {
+        var answer = await _chatCompletionService.GetSemanticKernelPlugInCompletion(
+            prompt: request.Question,
+            assistantPrompt: string.Empty);
 
-    //     return Ok(new { Message = answer });
-    // }
+        return Ok(new { Message = answer });
+    }
 }

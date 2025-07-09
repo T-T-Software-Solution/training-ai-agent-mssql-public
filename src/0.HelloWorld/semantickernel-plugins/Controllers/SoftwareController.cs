@@ -17,12 +17,12 @@ public class SoftwareController : ControllerBase
         _softwareOptions = softwareOptions.Value;
     }
 
-    // [HttpGet("version")]
-    // public IActionResult GetVersion()
-    // {
-    //     string version = _softwareOptions.Version;
-    //     _logger.LogInformation("Software version: {Version}", version);
+    [HttpGet("version")]
+    public IActionResult GetVersion()
+    {
+        string version = _softwareOptions.Version;
+        _logger.LogInformation("Software version: {Version}", version);
 
-    //     return Ok(new { Version = version });
-    // }
+        return Ok(new { Version = version });
+    }
 }

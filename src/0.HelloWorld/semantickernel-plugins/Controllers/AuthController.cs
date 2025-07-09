@@ -25,25 +25,25 @@ public class AuthController : ControllerBase
         _authOptions = authSettings.Value;
     }
 
-    // [HttpPost("login")]
-    // public IActionResult Login([FromBody] LoginModel login)
-    // {
-    //     _logger.LogInformation("Login attempt from user: {Username}", login.Username);
+    [HttpPost("login")]
+    public IActionResult Login([FromBody] LoginModel login)
+    {
+        _logger.LogInformation("Login attempt from user: {Username}", login.Username);
 
-    //     if (login.Username == _authOptions.AdminUser && login.Password == _authOptions.AdminPassword)
-    //     {
-    //         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
-    //         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        if (login.Username == _authOptions.AdminUser && login.Password == _authOptions.AdminPassword)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-    //         var token = new JwtSecurityToken(
-    //             claims: new[] { new Claim(ClaimTypes.Name, login.Username) },
-    //             expires: DateTime.UtcNow.AddHours(1),
-    //             signingCredentials: creds
-    //         );
+            var token = new JwtSecurityToken(
+                claims: new[] { new Claim(ClaimTypes.Name, login.Username) },
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: creds
+            );
 
-    //         return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token) });
-    //     }
+            return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token) });
+        }
 
-    //     return Unauthorized();
-    // }
+        return Unauthorized();
+    }
 }

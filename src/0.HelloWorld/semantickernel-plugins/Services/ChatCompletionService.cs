@@ -35,169 +35,169 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
         (semanticKernelPlugInService, semanticKernel) = GetSemanticKernelPlugInService();
     }
 
-    // private IChatCompletionService GetChatCompletionService()
-    // {
-    //     // Create a kernel builder and add the Azure OpenAI chat completion service
-    //     var kernelBuilder = Kernel.CreateBuilder().AddAzureOpenAIChatCompletion(
-    //                             deploymentName: _openAIOptions.ChatModel,
-    //                             endpoint: _openAIOptions.Endpoint,
-    //                             apiKey: _openAIOptions.ApiKey);
+    private IChatCompletionService GetChatCompletionService()
+    {
+        // Create a kernel builder and add the Azure OpenAI chat completion service
+        var kernelBuilder = Kernel.CreateBuilder().AddAzureOpenAIChatCompletion(
+                                deploymentName: _openAIOptions.ChatModel,
+                                endpoint: _openAIOptions.Endpoint,
+                                apiKey: _openAIOptions.ApiKey);
 
-    //     // Add Serilog logging
-    //     kernelBuilder.Services.AddSerilog();
+        // Add Serilog logging
+        kernelBuilder.Services.AddSerilog();
 
-    //     // Build the kernel
-    //     Kernel kernel = kernelBuilder.Build();
+        // Build the kernel
+        Kernel kernel = kernelBuilder.Build();
 
-    //     // Get the chat completion service from the kernel
-    //     return kernel.GetRequiredService<IChatCompletionService>();
-    // }
-    // private (IChatCompletionService, Kernel) GetSemanticKernelPlugInService()
-    // {
-    //     // Create a kernel builder and add the Azure OpenAI chat completion service
-    //     var kernelBuilder = Kernel.CreateBuilder().AddAzureOpenAIChatCompletion(
-    //                             deploymentName: _openAIOptions.ChatModel,
-    //                             endpoint: _openAIOptions.Endpoint,
-    //                             apiKey: _openAIOptions.ApiKey);
+        // Get the chat completion service from the kernel
+        return kernel.GetRequiredService<IChatCompletionService>();
+    }
+    private (IChatCompletionService, Kernel) GetSemanticKernelPlugInService()
+    {
+        // Create a kernel builder and add the Azure OpenAI chat completion service
+        var kernelBuilder = Kernel.CreateBuilder().AddAzureOpenAIChatCompletion(
+                                deploymentName: _openAIOptions.ChatModel,
+                                endpoint: _openAIOptions.Endpoint,
+                                apiKey: _openAIOptions.ApiKey);
 
-    //     // Add Serilog logging
-    //     kernelBuilder.Services.AddSerilog();
+        // Add Serilog logging
+        kernelBuilder.Services.AddSerilog();
 
-    //     // Build the kernel
-    //     var semanticKernelLocal = kernelBuilder.Build();
+        // Build the kernel
+        var semanticKernelLocal = kernelBuilder.Build();
 
-    //     // Add the lights plugin to the kernel
-    //     semanticKernelLocal.Plugins.AddFromType<LightsPlugin>("Lights");
-    // // semanticKernelLocal.Plugins.AddFromType<WeatherForecastPlugin>("WeatherForecast");
+        // Add the lights plugin to the kernel
+        semanticKernelLocal.Plugins.AddFromType<LightsPlugin>("Lights");
+        semanticKernelLocal.Plugins.AddFromType<WeatherForecastPlugin>("WeatherForecast");
 
-    //     // Get the chat completion service from the kernel
-    //     var semanticKernelPlugInServiceLocal = semanticKernelLocal.GetRequiredService<IChatCompletionService>();
+        // Get the chat completion service from the kernel
+        var semanticKernelPlugInServiceLocal = semanticKernelLocal.GetRequiredService<IChatCompletionService>();
 
-    //     return (semanticKernelPlugInServiceLocal, semanticKernelLocal);
-    // }
-    // public async Task<string> GetCompletion(string prompt, string? systemPrompt)
-    // {
-    //     _logger.LogInformation("Prompt: {Prompt}", prompt);
+        return (semanticKernelPlugInServiceLocal, semanticKernelLocal);
+    }
+    public async Task<string> GetCompletion(string prompt, string? systemPrompt)
+    {
+        _logger.LogInformation("Prompt: {Prompt}", prompt);
 
-    //     // Create a chat history object
-    //     ChatHistory chatHistory = new ChatHistory();
+        // Create a chat history object
+        ChatHistory chatHistory = new ChatHistory();
 
-    //     var isContainsSystemPrompt = !string.IsNullOrEmpty(systemPrompt);
-    //     if (isContainsSystemPrompt)
-    //     {
-    //         // Add the assistant prompt to the chat history
-    //         chatHistory.AddSystemMessage(systemPrompt!);
-    //     }
+        var isContainsSystemPrompt = !string.IsNullOrEmpty(systemPrompt);
+        if (isContainsSystemPrompt)
+        {
+            // Add the assistant prompt to the chat history
+            chatHistory.AddSystemMessage(systemPrompt!);
+        }
 
-    //     // Add the user prompt to the chat history
-    //     chatHistory.AddUserMessage(prompt);
+        // Add the user prompt to the chat history
+        chatHistory.AddUserMessage(prompt);
 
-    //     try
-    //     {
-    //         // Get the response from the AI
-    //         var startupTime = DateTime.UtcNow;
-    //         var result = await chatCompletionService.GetChatMessageContentAsync(chatHistory: chatHistory);
-    //         var endTime = DateTime.UtcNow;
-    //         var processingTime = (int)(endTime - startupTime).TotalSeconds;
+        try
+        {
+            // Get the response from the AI
+            var startupTime = DateTime.UtcNow;
+            var result = await chatCompletionService.GetChatMessageContentAsync(chatHistory: chatHistory);
+            var endTime = DateTime.UtcNow;
+            var processingTime = (int)(endTime - startupTime).TotalSeconds;
 
-    //         int? inputToken = null;
-    //         int? outputToken = null;
-    //         if (result.InnerContent is OpenAI.Chat.ChatCompletion chatCompletion)
-    //         {
-    //             inputToken = chatCompletion.Usage?.InputTokenCount;
-    //             outputToken = chatCompletion.Usage?.OutputTokenCount;
-    //         }
+            int? inputToken = null;
+            int? outputToken = null;
+            if (result.InnerContent is OpenAI.Chat.ChatCompletion chatCompletion)
+            {
+                inputToken = chatCompletion.Usage?.InputTokenCount;
+                outputToken = chatCompletion.Usage?.OutputTokenCount;
+            }
 
-    //         // Log the role and content of the response
-    //         _logger.LogInformation("Role: {Role}, Content: {Content}", result.Role, result.Content);
-    //         _logger.LogInformation("Input Token: {InputToken}, Output Token: {OutputToken}", inputToken, outputToken);
-    //         _logger.LogInformation("Processing Time: {ProcessingTime} seconds", processingTime);
-    //         _logger.LogInformation("Total Token: {TotalToken}", (inputToken ?? 0) + (outputToken ?? 0));
+            // Log the role and content of the response
+            _logger.LogInformation("Role: {Role}, Content: {Content}", result.Role, result.Content);
+            _logger.LogInformation("Input Token: {InputToken}, Output Token: {OutputToken}", inputToken, outputToken);
+            _logger.LogInformation("Processing Time: {ProcessingTime} seconds", processingTime);
+            _logger.LogInformation("Total Token: {TotalToken}", (inputToken ?? 0) + (outputToken ?? 0));
 
-    //         // Log the cost of the request
-    //         var costInputToken = inputToken * 0.15 / 1000000;
-    //         var costOutputToken = outputToken * 0.6 / 1000000;
+            // Log the cost of the request
+            var costInputToken = inputToken * 0.15 / 1000000;
+            var costOutputToken = outputToken * 0.6 / 1000000;
 
-    //         _logger.LogInformation($"Total Cost (USD): {costInputToken + costOutputToken}");
-    //         _logger.LogInformation($"Total Cost (THB): {(costInputToken + costOutputToken) * 35}");
-
-
-    //         // Add the message from the agent to the chat history
-    //         chatHistory.AddMessage(result.Role, result.Content ?? string.Empty);
-
-    //         return result.Content ?? string.Empty;
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         _logger.LogError(ex, "Error getting completion from AI");
-
-    //         return ErrorCallingAI;
-    //     }
-    // }
-
-    // public async Task<string> GetSemanticKernelPlugInCompletion(string prompt, string? systemPrompt)
-    // {
-    //     _logger.LogInformation("Prompt: {Prompt}", prompt);
-
-    //     // Create a chat history object
-    //     ChatHistory chatHistory = new ChatHistory();
-
-    //     var isContainsSystemPrompt = !string.IsNullOrEmpty(systemPrompt);
-    //     if (isContainsSystemPrompt)
-    //     {
-    //         // Add the assistant prompt to the chat history
-    //         chatHistory.AddSystemMessage(systemPrompt!);
-    //     }
-
-    //     // Add the user prompt to the chat history
-    //     chatHistory.AddUserMessage(prompt);
-
-    //     try
-    //     {
-    //         // Get the response from the AI
-    //         var startupTime = DateTime.UtcNow;
-    //         var result = await semanticKernelPlugInService.GetChatMessageContentAsync(
-    //             chatHistory: chatHistory,
-    //             executionSettings: new() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() },
-    //             kernel: semanticKernel
-    //             );
-    //         var endTime = DateTime.UtcNow;
-    //         var processingTime = (int)(endTime - startupTime).TotalSeconds;
-
-    //         int? inputToken = null;
-    //         int? outputToken = null;
-    //         if (result.InnerContent is OpenAI.Chat.ChatCompletion chatCompletion)
-    //         {
-    //             inputToken = chatCompletion.Usage?.InputTokenCount;
-    //             outputToken = chatCompletion.Usage?.OutputTokenCount;
-    //         }
-
-    //         // Log the role and content of the response
-    //         _logger.LogInformation("Role: {Role}, Content: {Content}", result.Role, result.Content);
-    //         _logger.LogInformation("Input Token: {InputToken}, Output Token: {OutputToken}", inputToken, outputToken);
-    //         _logger.LogInformation("Processing Time: {ProcessingTime} seconds", processingTime);
-    //         _logger.LogInformation("Total Token: {TotalToken}", (inputToken ?? 0) + (outputToken ?? 0));
-
-    //         // Log the cost of the request
-    //         var costInputToken = inputToken * 0.15 / 1000000;
-    //         var costOutputToken = outputToken * 0.6 / 1000000;
-
-    //         _logger.LogInformation($"Total Cost (USD): {costInputToken + costOutputToken}");
-    //         _logger.LogInformation($"Total Cost (THB): {(costInputToken + costOutputToken) * 35}");
+            _logger.LogInformation($"Total Cost (USD): {costInputToken + costOutputToken}");
+            _logger.LogInformation($"Total Cost (THB): {(costInputToken + costOutputToken) * 35}");
 
 
-    //         // Add the message from the agent to the chat history
-    //         chatHistory.AddMessage(result.Role, result.Content ?? string.Empty);
+            // Add the message from the agent to the chat history
+            chatHistory.AddMessage(result.Role, result.Content ?? string.Empty);
 
-    //         return result.Content ?? string.Empty;
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         _logger.LogError(ex, "Error getting completion from AI");
+            return result.Content ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting completion from AI");
 
-    //         return ErrorCallingAI;
-    //     }
-    // }
+            return ErrorCallingAI;
+        }
+    }
+
+    public async Task<string> GetSemanticKernelPlugInCompletion(string prompt, string? systemPrompt)
+    {
+        _logger.LogInformation("Prompt: {Prompt}", prompt);
+
+        // Create a chat history object
+        ChatHistory chatHistory = new ChatHistory();
+
+        var isContainsSystemPrompt = !string.IsNullOrEmpty(systemPrompt);
+        if (isContainsSystemPrompt)
+        {
+            // Add the assistant prompt to the chat history
+            chatHistory.AddSystemMessage(systemPrompt!);
+        }
+
+        // Add the user prompt to the chat history
+        chatHistory.AddUserMessage(prompt);
+
+        try
+        {
+            // Get the response from the AI
+            var startupTime = DateTime.UtcNow;
+            var result = await semanticKernelPlugInService.GetChatMessageContentAsync(
+                chatHistory: chatHistory,
+                executionSettings: new() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() },
+                kernel: semanticKernel
+                );
+            var endTime = DateTime.UtcNow;
+            var processingTime = (int)(endTime - startupTime).TotalSeconds;
+
+            int? inputToken = null;
+            int? outputToken = null;
+            if (result.InnerContent is OpenAI.Chat.ChatCompletion chatCompletion)
+            {
+                inputToken = chatCompletion.Usage?.InputTokenCount;
+                outputToken = chatCompletion.Usage?.OutputTokenCount;
+            }
+
+            // Log the role and content of the response
+            _logger.LogInformation("Role: {Role}, Content: {Content}", result.Role, result.Content);
+            _logger.LogInformation("Input Token: {InputToken}, Output Token: {OutputToken}", inputToken, outputToken);
+            _logger.LogInformation("Processing Time: {ProcessingTime} seconds", processingTime);
+            _logger.LogInformation("Total Token: {TotalToken}", (inputToken ?? 0) + (outputToken ?? 0));
+
+            // Log the cost of the request
+            var costInputToken = inputToken * 0.15 / 1000000;
+            var costOutputToken = outputToken * 0.6 / 1000000;
+
+            _logger.LogInformation($"Total Cost (USD): {costInputToken + costOutputToken}");
+            _logger.LogInformation($"Total Cost (THB): {(costInputToken + costOutputToken) * 35}");
+
+
+            // Add the message from the agent to the chat history
+            chatHistory.AddMessage(result.Role, result.Content ?? string.Empty);
+
+            return result.Content ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting completion from AI");
+
+            return ErrorCallingAI;
+        }
+    }
 
     private class LightsPlugin
     {
@@ -236,31 +236,31 @@ Sorry, I am unable to provide an answer at the moment. Please try again later.";
         }
     }
 
-    // private class WeatherForecastPlugin
-    // {
-    //     private readonly HttpClient _httpClient = new();
-    //     private const string ApiUrlTemplate = "https://wttr.in/{0}?format=j1";
+    private class WeatherForecastPlugin
+    {
+        private readonly HttpClient _httpClient = new();
+        private const string ApiUrlTemplate = "https://wttr.in/{0}?format=j1";
 
-    //     [KernelFunction("get_weather_forecast")]
-    //     [Description("Gets the 3-day weather forecast for a specified city using the global free wttr.in API.")]
-    //     [return: Description("A string containing the weather forecast summary for the city.")]
-    //     public async Task<string> GetWeatherForecastAsync([Description("City name in English")] string city)
-    //     {
-    //         try
-    //         {
-    //             var url = string.Format(ApiUrlTemplate, Uri.EscapeDataString(city));
-    //             var response = await _httpClient.GetAsync(url);
-    //             response.EnsureSuccessStatusCode();
-    //             var json = await response.Content.ReadAsStringAsync();
-    //             // Optionally, parse and summarize the JSON here
-    //             return json;
-    //         }
-    //         catch (Exception ex)
-    //         {
-    //             return $"Error fetching weather forecast: {ex.Message}";
-    //         }
-    //     }
-    // }
+        [KernelFunction("get_weather_forecast")]
+        [Description("Gets the 3-day weather forecast for a specified city using the global free wttr.in API.")]
+        [return: Description("A string containing the weather forecast summary for the city.")]
+        public async Task<string> GetWeatherForecastAsync([Description("City name in English")] string city)
+        {
+            try
+            {
+                var url = string.Format(ApiUrlTemplate, Uri.EscapeDataString(city));
+                var response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                var json = await response.Content.ReadAsStringAsync();
+                // Optionally, parse and summarize the JSON here
+                return json;
+            }
+            catch (Exception ex)
+            {
+                return $"Error fetching weather forecast: {ex.Message}";
+            }
+        }
+    }
 
     private class LightModel
     {

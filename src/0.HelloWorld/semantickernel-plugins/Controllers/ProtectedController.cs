@@ -15,11 +15,11 @@ public class ProtectedController : ControllerBase
         _logger = logger;
     }
 
-    // [HttpGet("data")]
-    // public IActionResult GetProtectedData()
-    // {
-    //     var userName = User.Identity?.Name;
-    //     _logger.LogInformation("User '{UserName}' is accessing protected data.", userName);
-    //     return Ok(new { Message = $"Hello {userName}, this is protected!" });
-    // }
+    [HttpGet("data")]
+    public IActionResult GetProtectedData()
+    {
+        var userName = User.Identity?.Name;
+        _logger.LogInformation("User '{UserName}' is accessing protected data.", userName);
+        return Ok(new { Message = $"Hello {userName}, this is protected!" });
+    }
 }
